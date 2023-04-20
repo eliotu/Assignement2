@@ -151,3 +151,6 @@ class BeliefBase:
                         break
 
 
+    ####################################################################
+    def expand(self, phi):
+        self.beliefs.append(phi)
