@@ -52,7 +52,7 @@ class BeliefBase:
         return clauses
 
 
-    def resolution(self,phi):
+    def entailement(self,phi):
         clauses=self.transform_to_cnf(self.beliefs, phi)
         while True:
             new_clauses = set()
@@ -70,7 +70,7 @@ class BeliefBase:
 
             clauses |= new_clauses
 
-    def resolution_with_clauses(self,formulas, phi):
+    def entailement_with_clauses(self,formulas, phi):
         clauses=self.transform_to_cnf(formulas,phi)
         while True:
             new_clauses = set()
@@ -115,9 +115,11 @@ class BeliefBase:
     ####################################################################
 
 
-    def sort_by_priority(self, beliefs):
-        s=sorted(beliefs, key=lambda x: x.priority, reverse=False)
+    def sort_by_priority(self, beliefs,reverse=True):
+        s=sorted(beliefs, key=lambda x: x.priority, reverse=reverse)
         return s
+
+
 
     def contract(self, phi):
         """ Apply aging-based contraction with entrenchment to the belief base """
@@ -126,29 +128,19 @@ class BeliefBase:
         # Sort the beliefs in B in increasing order of priority.
         beliefs=self.sort_by_priority(self.beliefs)
 
-        delete = []
+        tmp_beliefs = []
 
         for i, belief in enumerate(beliefs):
+            tmp_beliefs.append(belief)
+            if self.entailement_with_clauses(tmp_beliefs,Belief(prop_cnf,phi.priority)):
+                tmp_beliefs.pop()
 
-            if self.resolution_with_clauses(beliefs[i:i + 1], Belief(prop_cnf,phi.priority)):
-                delete.append(belief)
 
-        self.beliefs = [belief for belief in self.beliefs if belief not in delete]
+
+        self.beliefs = tmp_beliefs
 
         # Iterate over each pair of beliefs in B
-        for i, b1 in enumerate(self.beliefs):
-            for j, b2 in enumerate(self.beliefs):
-                if i == j:
-                    continue
-                # Check if beliefs b1 and b2 are inconsistent
-                a=[b1]
-                if not self.resolution_with_clauses([b1], b2) and not self.resolution_with_clauses([b2], b1):
-                    # Remove the belief with lower priority
-                    if b1.priority < b2.priority:
-                        self.beliefs.pop(j)
-                    else:
-                        self.beliefs.pop(i)
-                        break
+
 
 
     ####################################################################
