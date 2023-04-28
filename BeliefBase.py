@@ -9,6 +9,16 @@ class BeliefBase:
     def __init__(self):
         self.beliefs = []
 
+    def __eq__(self, other):
+        if(len(other.get_beliefs())==len(self.beliefs)):
+            for c in other.get_beliefs():
+                if not self.contains(c):
+                    return false
+            return true
+
+        return false
+
+
     def add_formula(self, formula):
         if not self.contains(formula):
             self.beliefs.append(formula)
@@ -27,6 +37,11 @@ class BeliefBase:
 
         return formulas
 
+    def copy(self):
+        new=BeliefBase()
+        for b in self.get_beliefs():
+            new.add_formula(b)
+        return new
 
     ####################################################################
 
@@ -147,8 +162,8 @@ class BeliefBase:
 
     ####################################################################
     def expand(self, phi):
-        self.beliefs.append(phi)
 
+        self.add_formula(phi)
 
 
     def revision(self,phi):
