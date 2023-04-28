@@ -132,6 +132,8 @@ class BeliefBase:
 
         for i, belief in enumerate(beliefs):
             tmp_beliefs.append(belief)
+            # Check if the conjunction of the beliefs in tmp_beliefs and the new belief (phi)
+            # entails the new belief. If so, remove the new belief from tmp_beliefs.
             if self.entailement_with_clauses(tmp_beliefs,Belief(prop_cnf,phi.priority)):
                 tmp_beliefs.pop()
 
@@ -146,3 +148,13 @@ class BeliefBase:
     ####################################################################
     def expand(self, phi):
         self.beliefs.append(phi)
+
+
+
+    def revision(self,phi):
+        ## we are going to use levi-identity
+        negated_cnf = Belief(Not(to_cnf(phi.formula)),phi.priority)
+        self.contract(negated_cnf)
+        self.expand(phi)
+
+
