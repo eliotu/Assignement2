@@ -18,23 +18,38 @@ if __name__ == '__main__':
     S = Symbol('S')
     Q = Symbol('Q')
 
-    formula= Equivalent(r, Or(p, s))
-    f=Implies(s,p)
-    f2=Implies(s,q)
 
-    belief_base.add_formula(Belief(f,1))
-    belief_base.add_formula(Belief(f2,1))
-    belief_base.add_formula(Belief(s,2))
+    option=-1
+    while(option!=5):
+        print("Print (1)")
+        print("Contract (2)")
+        print(" Expand (3)")
+        print(" Revise (4)")
+        print(" Exit (5)")
+        option=int(input("What do you want to do:"))
 
-    phi=~P
+        if(option==1):
+            print(belief_base.get_formulas())
+        elif(option==2):
+            formula = input("Enter the formula:")
+            priority = int(input("enter priority:"))
+            f = Belief(sympify(formula), priority)
+            belief_base.contract(f)
+        elif (option == 3):
+            formula = input("Enter the formula:")
+            priority = int(input("enter priority:"))
+            f = Belief(sympify(formula), priority)
+            belief_base.expand(f)
+        elif (option == 4):
+            formula = input("Enter the formula:")
+            priority = int(input("enter priority:"))
+            f = Belief(sympify(formula), priority)
+            belief_base.revision(f)
+        else:
+            print("Thank you")
+            option=5
 
 
 
 
-    formulas = belief_base.get_formulas()
-    print(formulas)
 
-
-
-    belief_base.contract(Belief(q,1))
-    print(belief_base.get_formulas())
